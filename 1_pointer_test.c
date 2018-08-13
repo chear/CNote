@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "1_pointer_test.h"
+#include "header.h"
 
 #define MAX_LEN 10
 unsigned char *RxPacket[MAX_LEN];
@@ -18,6 +18,8 @@ int main (int argc, char **argv){
     unsigned long val4 = 0x10;
 
 
+    privMultiBoot->dbgLevel = 1;
+    MSG("find", "tab" );            
 #if 1
     for(int i=0;i<MAX_LEN;i++){
         RxPacket[i] = NULL;
