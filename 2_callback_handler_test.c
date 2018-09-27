@@ -3,6 +3,7 @@
 
 
 handler_t  *handler = &goHandler;
+char flag = 0x00;
 
 void* callback_thread(void *p1)//此处用的是一个线程
 {
@@ -13,6 +14,16 @@ void* callback_thread(void *p1)//此处用的是一个线程
         printf("GetCallBack print! \n");
         sleep(3);//延时3秒执行callback函数
         p->callback(p->a);//函数指针执行函数，这个函数来自于应用层B
+		
+		  if (timeHandler && (( get_timer(0) - timeStart ) > timeDelta)) {
+              thand_f *x;                                             
+              x = timeHandler;                                                                                                          
+              timeHandler = (thand_f *)0;                             
+              (*x)();                                                 
+        
+          }           
+		
+		
     }
 }
 
@@ -38,6 +49,21 @@ void fCallBack(int a)       // 应用者增加的函数，此函数会在A中被
     printf("a = %d\n",a);
     printf("fCallBack print! \n");
 }
+
+
+int doHandler(){
+
+commmon:
+    flag = 1
+    printf("goto common flag!\n");
+
+
+    if ( !flag ) {
+        printf("flag its null !!!\n");
+
+    }
+}
+
 
 
 int main (int argc, char **argv){

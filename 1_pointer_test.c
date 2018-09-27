@@ -17,7 +17,7 @@ int main (int argc, char **argv){
     unsigned long *val3 = (long *)base;
     unsigned long val4 = 0x10;
 
-
+        
     privMultiBoot->dbgLevel = 1;
     MSG("find", "tab" );            
 #if 1

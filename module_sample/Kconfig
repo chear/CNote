@@ -1,0 +1,21 @@
+#
+# Chear's module sample configuration
+#
+
+menuconfig CHEAR_MODULE_SAMPLE
+	bool "module sample for chear"
+	help
+	  You can build and test sample module kernel code from Chear (https://github.com/chear) by testing.
+
+if CHEAR_MODULE_SAMPLE
+
+config SAMPLE_WRITE_TO_CDEV
+	tristate "Chear's module examples"
+	depends on m
+	help
+      sample code to /dev/ttyp0 for telnet terminal
+
+	  If in doubt, say "N" here.
+
+
+endif # CHEAR_MODULE_SAMPLE
