@@ -1,0 +1,5 @@
+Des:
+This app used to send socket to /usr/bin/voiceApp for Factory Testing Mode without CCC3.0 in ZyXEL, 
+and tested on ecnet_7580 
+
+ChangeLog:

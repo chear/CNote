@@ -136,3 +136,12 @@ all.config
 *.exe
 /module_sample/s2_boardctrl_ioctl
 *.exe.stackdump
+
+# release file
+1_pointer_test
+2_callback_handler_test
+3_arrray_test
+4_fork
+test_app
+
+

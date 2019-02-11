@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <pthread.h>
 #include "header.h"
 
 
@@ -14,7 +15,8 @@ void* callback_thread(void *p1)//此处用的是一个线程
         printf("GetCallBack print! \n");
         sleep(3);//延时3秒执行callback函数
         p->callback(p->a);//函数指针执行函数，这个函数来自于应用层B
-		
+	
+        /*
 		  if (timeHandler && (( get_timer(0) - timeStart ) > timeDelta)) {
               thand_f *x;                                             
               x = timeHandler;                                                                                                          
@@ -22,7 +24,7 @@ void* callback_thread(void *p1)//此处用的是一个线程
               (*x)();                                                 
         
           }           
-		
+		*/
 		
     }
 }
@@ -37,9 +39,11 @@ extern SetCallBackFun(int a, DoHandler callback)
     p->callback = callback;
 
     //创建线程
+    /*
     pthread_t thing1;
     pthread_create(&thing1,NULL,callback_thread,(void *) p);
     pthread_join(thing1,NULL);
+    */
 }
 
 
@@ -54,7 +58,7 @@ void fCallBack(int a)       // 应用者增加的函数，此函数会在A中被
 int doHandler(){
 
 commmon:
-    flag = 1
+    flag = 1;
     printf("goto common flag!\n");
 
 
