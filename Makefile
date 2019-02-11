@@ -2,6 +2,7 @@
 CFLAGS=-ansi -Wall -pedantic -std=c99 
 LFLAGS=-lm 
 CC=gcc
+
 ## -ansi 		ANSI/ISO C标准
 ## -Wall		GCC产生尽可能多的警告信息
 ## -pedantic	选项能够帮助程序员发现一些不符合 ANSI/ISO C标准的代码，但不是全部，事实上只有ANSI/ISO C语言标准中要求进行编译器诊断的那些情况，才有可能被GCC发现并提出警告
