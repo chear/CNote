@@ -3,11 +3,22 @@
 
 #define MAX_LEN 10
 unsigned char *RxPacket[MAX_LEN];
+typedef unsigned int unint;
 
 static MultiBoot_T globalMultiBoot;
 MultiBoot_T *privMultiBoot = &globalMultiBoot;
 
 int main (int argc, char **argv){
+
+    const unint k = 4;
+    /* 'const int *p = int const *p' */
+    const int *p1;
+    int const *p2;
+    const int * const p
+    p1 = &k;
+    p2 = &k;
+
+
     unsigned char id[4]={0x00,0x00,0x00,0x14}  ;
     unsigned char *base = &id;            
     unsigned long *result = base+3;
@@ -25,6 +36,8 @@ int main (int argc, char **argv){
         RxPacket[i] = NULL;
     }
 #endif
+
+
 
 
     setPacket(20,base+1);

@@ -22,5 +22,4 @@ typedef struct handler_s{
 static handler_t goHandler;
 
 
-
-
+typedef unsigned int int32;

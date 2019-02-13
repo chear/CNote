@@ -8,7 +8,8 @@ CC=gcc
 ## -std=c99		C-99 standard
 
 ## To make all
-all:1_ 3_ 4_ mkApp
+all: mkApp 1_ 3_ 4_ 5_
+
 
 ## sample to make the whole App
 SOURCES=2_callback_handler_test.c 
@@ -27,11 +28,8 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(CFLAGS) -o %@ -c %<
 
 ## To make the Test App
-1_:1_.o
-	$(CC) $(CFLAGS) -o 1_pointer_test 1_pointer_test.o
-
-1_.o:1_pointer_test.c
-	$(CC) $(CFLAGS) -c 1_pointer_test.c
+1_:1_pointer_test.c
+	$(CC) $(CFLAGS) -o 1_pointer_test 1_pointer_test.c
 
 2_handle:2_handle.o
 	$(CC) $(CFLAGS) -o 2_callback_handler_test 2_callback_handler_test.o 
@@ -39,17 +37,18 @@ $(EXECUTABLE): $(OBJECTS)
 2_handle.o:2_callback_handler_test.c header.h 
 	$(CC) $(CFLAGS) -c 2_callback_handler_test.c 
 
-3_:3_.o
+3_:3_array_test.c 
 	$(CC) $(CFLAGS) -o 3_array_test 3_array_test.c 
 
-3_.o:3_array_test.c 
-	$(CC) $(CFLAGS) -c 3_array_test.c
-
-4_:4_.o
+4_:4_process_fork
 	$(CC) $(CFLAGS) -o 4_fork 4_process_fork.c 
 
-4_.o:4_process_fork.c 
-	$(CC) $(CFLAGS) -c 4_process_fork.c 
+5_:5_pipe.c
+	$(CC) $(CFLAGS) -o 5_pipe 5_pipe.c 
+
+6_:6_flock.c
+	$(CC) $(CFLAGS) -o 6_flock.c 
+
 
 ## Old one should be remove
 ##all:mk1 mk2

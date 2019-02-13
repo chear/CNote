@@ -138,10 +138,10 @@ all.config
 *.exe.stackdump
 
 # release file
+test_app
 1_pointer_test
 2_callback_handler_test
 3_arrray_test
 4_fork
-test_app
-
+5_pipe
 

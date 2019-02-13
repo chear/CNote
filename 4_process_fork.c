@@ -30,7 +30,7 @@ int main() {
         } 
         else /*出错*/ 
         {
-            printf("error: %s\n.\n", strerror(errno));
+            printf("error: %d\n.\n", strerror(errno));
 
         } 
     } 
