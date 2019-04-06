@@ -141,7 +141,7 @@ all.config
 test_app
 1_pointer_test
 2_callback_handler_test
-3_arrray_test
+3_array_test
 4_fork
 5_pipe
 
