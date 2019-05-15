@@ -9,7 +9,7 @@ CC=gcc
 ## -std=c99		C-99 standard
 
 ## To make all
-all: mkApp 1_ 3_ 4_ 5_
+all: mkApp 1_ 3_ 4_ 5_ 7_
 
 
 ## sample to make the whole App
@@ -50,6 +50,8 @@ $(EXECUTABLE): $(OBJECTS)
 6_:6_flock.c
 	$(CC) $(CFLAGS) -o 6_flock.c 
 
+7_:7_ioctl.c
+	$(CC) $(CFLAGS) -o 7_ioctl 7_ioctl.c 
 
 ## Old one should be remove
 ##all:mk1 mk2
@@ -69,5 +71,11 @@ $(EXECUTABLE): $(OBJECTS)
 ##
 ##
 
+ARM_TOOLCHAIN=/home/chear/ReleaseCode/HSANV200R010C01B140/toolchain/arm-openwrt-linux-uclibcgnueabi/bin/
+hi_exe:
+	$(ARM_TOOLCHAIN)arm-openwrt-linux-uclibcgnueabi-gcc -c 7_ioctl.c
+	$(ARM_TOOLCHAIN)arm-openwrt-linux-uclibcgnueabi-gcc -o 7_ioctl_arm 7_ioctl.o
+
+
 clean:
-	rm -f main *.o *.exe *.exe.stackdump  1_pointer_test 2_callback_handler_test 3_array_test 4_fork
+	rm -f main *.o *.exe *.exe.stackdump  1_pointer_test 2_callback_handler_test 3_array_test 4_fork 7_ioctl 7_ioctl_arm

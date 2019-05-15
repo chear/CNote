@@ -144,4 +144,5 @@ test_app
 3_array_test
 4_fork
 5_pipe
-
+7_ioctl
+7_ioctl_arm
