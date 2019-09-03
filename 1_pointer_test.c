@@ -9,8 +9,9 @@ static MultiBoot_T globalMultiBoot;
 MultiBoot_T *privMultiBoot = &globalMultiBoot;
 
 
-#define TEST_1 1 
-#define TEST_2 1 
+#define TEST_1 0 
+#define TEST_2 0
+#define TEST_3 1 
 int main (int argc, char **argv){
 
     const unint k = 4;
@@ -90,6 +91,13 @@ int main (int argc, char **argv){
     printf (" %d , %d \n", *(a+1),*(ptr-1));
 #endif
 
+
+#if TEST_3
+    int val = 0;
+    int *p;
+    val = p;
+
+#endif
     return 0 ;
 }
 

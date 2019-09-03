@@ -1,0 +1,137 @@
+#===============================================================================
+# Macro
+#===============================================================================
+CURRENT_DIR=$(shell pwd)
+Q=@
+BOOT_PATH=$(CURRENT_DIR)/../platform/bootloader
+BOOT_BSP_PATH=$(CURRENT_DIR)/../platform/bsp/kernel_ext
+KERNEL_PATH=$(CURRENT_DIR)/../platform/bsp/linux-3.18.21/
+BSP_PATH=$(CURRENT_DIR)/../platform/bsp/
+BIN=$(shell cd ~/;pwd)
+
+.PHONY:$(BIN)/.myctags/linux.ctags
+$(BIN)/.myctags/linux.ctags:
+	echo "generate rules";
+	@if [ ! -d $(BIN)/.mytags  ];then \
+		if [ -e $(BIN)/.vim_runtime/ctags_parser/linux.ctags  ];then\
+		cp -R $(BIN)/.vim_runtime/ctags_parser $(BIN)/.myctags; fi \
+	fi;
+
+
+.PHONY:appdev_env
+appdev_env:
+	@if [ ! -e $(CURRENT_DIR)/sysapps/.ctagsignore ];then \
+		echo "$(CURRENT_DIR)/sysapps/private/mitrastar/libplatform/realtek/960x/"  > $(CURRENT_DIR)/sysapps/.ctagsignore; \
+		echo "$(CURRENT_DIR)/sysapps/public/others/openssl-0.9.7f/test/fips_aes_data/" >> $(CURRENT_DIR)/sysapps/.ctagsignore; \
+		echo "$(CURRENT_DIR)/sysapps/private/third-party/mtk/7526G/apps/private/tclinux_builder/tclinux_allinone.swap"  >> $(CURRENT_DIR)/sysapps/.ctagsignore; \
+		echo "$(CURRENT_DIR)/sysapps/private/third-party/mtk/7526G/apps/tclinux_builder/tclinux_allinone.swap"  >> $(CURRENT_DIR)/sysapps/.ctagsignore; \
+		echo "$(CURRENT_DIR)/sysapps/private/third-party/mtk/7526G/apps/private/tclinux_builder"  >> $(CURRENT_DIR)/sysapps/.ctagsignore; \
+		echo "svn" >> $(CURRENT_DIR)/sysapps/.ctagsignore; \
+	fi;
+	$(Q)cd $(CURRENT_DIR)/sysapps; \
+	ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
+	/usr/bin/find $(CURRENT_DIR)/sysapps/ -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(CURRENT_DIR)/sysapps/cs.files;\
+	cscope -b -k -q $(CURRENT_DIR)/sysapps/cs.files;
+	@if [ -e $(CURRENT_DIR)/sysapps/.previm ];then\
+		rm $(CURRENT_DIR)/sysapps/.previm;\
+	fi;
+	echo "set tags+=$(CURRENT_DIR)/sysapps/c_tags " > $(CURRENT_DIR)/sysapps/.previm 
+
+.PHONY:clean
+clean:
+	@rm $(CURRENT_DIR)/sysapps/.previm ;\
+	$(Q)rm $(CURRENT_DIR)/sysapps/c_tags;\
+	$(Q)rm $(CURRENT_DIR)/sysapps/cscope* ;\
+	$(Q)rm $(CURRENT_DIR)/sysapps/cs.files ;\
+	@rm $(CURRENT_DIR)/sysapps/.ctagsignore
+
+
+
+
+.PHONY:boot_env
+boot_env:
+	@if [ ! -e $(BOOT_PATH)/.ctagsignore ];then \
+		echo "svn" > $(BOOT_PATH)/.ctagsignore; \
+		echo "hisi.ctags" >> $(BOOT_PATH)/.ctagsignore; \
+		echo "uboot/tcboot_MRD.bin.swap" >> $(BOOT_PATH)/.ctagsignore; \
+		echo "tcboot_MRD.bin.swap" >> $(BOOT_PATH)/.ctagsignore; \
+		echo "uboot/bootram/*" >> $(BOOT_PATH)/.ctagsignore; \
+	fi;
+	$(Q)cd $(BOOT_PATH)/; \
+	ctags --options=NONE --options=$(BIN)/.myctags/linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
+	/usr/bin/find $(BOOT_PATH) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(BOOT_PATH)/cs.files;\
+	cscope -b -k -q $(BOOT_PATH)/cs.files;
+	@if [ -e $(BOOT_PATH)/.previm ];then\
+		rm $(BOOT_PATH)/.previm;\
+	fi;
+	@if [ ! -e $(BOOT_BSP_PATH)/.ctagsignore ];then \
+		echo "svn" > $(BOOT_BSP_PATH)/.ctagsignore; \
+		echo "hisi.ctags" >> $(BOOT_BSP_PATH)/.ctagsignore; \
+	fi;
+	$(Q)cd $(BOOT_BSP_PATH)/; \
+	ctags --options=NONE --options=$(BIN)/.myctags/linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
+	/usr/bin/find $(BOOT_BSP_PATH) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(BOOT_BSP_PATH)/cs.files;\
+	cscope -b -k -q $(BOOT_BSP_PATH)/cs.files;
+	@if [ -e $(BOOT_BSP_PATH)/.previm ];then\
+		rm $(BOOT_BSP_PATH)/.previm;\
+	fi;
+	echo "set tags=$(BOOT_PATH)/c_tags " > $(BOOT_PATH)/.previm 
+#	echo "set tags+=$(BOOT_BSP_PATH)/c_tags " >> $(BOOT_PATH)/.previm 
+
+
+
+.PHONY:boot_clean
+boot_clean:
+	$(RM) $(BOOT_PATH)/c_tags;\
+	$(RM) $(BOOT_PATH)/cscope* ;\
+	$(RM) $(BOOT_PATH)/.ctagsignore;\
+	$(RM) $(BOOT_PATH)/.previm;\
+	$(RM) $(BOOT_PATH)/cs.files ;
+	$(RM) $(BOOT_BSP_PATH)/c_tags;\
+	$(RM) $(BOOT_BSP_PATH)/cscope* ;\
+	$(RM) $(BOOT_BSP_PATH)/.ctagsignore;\
+	$(RM) $(BOOT_BSP_PATH)/cs.files ;
+
+
+
+.PHONY:kernel_env
+kernel_env: $(BIN)/.myctags/linux.ctags
+	@if [ ! -e $(KERNEL_PATH)/.ctagsignore ];then \
+		echo "svn" > $(KERNEL_PATH)/.ctagsignore; \
+	fi;
+	$(Q)cd $(KERNEL_PATH)/; \
+	ctags --options=NONE --options=$(BIN)/.myctags/linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
+	/usr/bin/find $(KERNEL_PATH) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(KERNEL_PATH)/cs.files;\
+	cscope -b -k -q $(KERNEL_PATH)/cs.files;
+	@if [ -e $(KERNEL_PATH)/.previm ];then\
+		rm $(KERNEL_PATH)/.previm;\
+	fi;
+	@if [ ! -e $(BOOT_BSP_PATH)/.ctagsignore ];then \
+		echo "svn" > $(BOOT_BSP_PATH)/.ctagsignore; \
+		echo "hisi.ctags" >> $(BOOT_BSP_PATH)/.ctagsignore; \
+	fi;
+	$(Q)cd $(BOOT_BSP_PATH)/; \
+	ctags --options=NONE --options=$(BIN)/.myctags/linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
+	/usr/bin/find $(BOOT_BSP_PATH) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(BOOT_BSP_PATH)/cs.files;\
+	cscope -b -k -q $(BOOT_BSP_PATH)/cs.files;
+	@if [ -e $(BOOT_BSP_PATH)/.previm ];then\
+		rm $(BOOT_BSP_PATH)/.previm;\
+	fi;
+	echo "set tags=$(KERNEL_PATH)/c_tags " > $(KERNEL_PATH)/.previm 
+	echo "set tags+=$(BOOT_BSP_PATH)/c_tags " >> $(KERNEL_PATH)/.previm 
+
+
+.PHONY:bsp_env
+bsp_env:
+	@if [ ! -e $(BSP_PATH)/.ctagsignore ];then \
+		echo "svn" > $(BSP_PATH)/.ctagsignore; \
+	fi;
+	$(Q)cd $(BSP_PATH)/; \
+	ctags --options=NONE --options=$(BIN)/.myctags/linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
+	/usr/bin/find $(BSP_PATH) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(BSP_PATH)/cs.files;\
+	cscope -b -k -q $(BSP_PATH)/cs.files;
+	@if [ -e $(BSP_PATH)/.previm ];then\
+		rm $(BSP_PATH)/.previm;\
+	fi;
+	echo "set tags=$(BSP_PATH)/c_tags " > $(BSP_PATH)/.previm 
+

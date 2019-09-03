@@ -78,4 +78,5 @@ hi_exe:
 
 
 clean:
-	rm -f main *.o *.exe *.exe.stackdump  1_pointer_test 2_callback_handler_test 3_array_test 4_fork 7_ioctl 7_ioctl_arm
+	rm -f main *.o *.exe *.exe.stackdump  1_pointer_test 2_callback_handler_test 3_array_test 4_fork 7_ioctl 7_ioctl_arm;
+	rm -f aaaa* sample test_app;

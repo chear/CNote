@@ -1,0 +1,116 @@
+#===============================================================================
+# Macro
+#===============================================================================
+CURRENT_DIR=$(shell pwd)
+Q=@
+BOOT_PATH=$(CURRENT_DIR)/bootrom
+APP_PATH=$(CURRENT_DIR)/apps
+KERNEL_PATH=$(CURRENT_DIR)/linux-3.18.21
+MODULES_PATH=$(CURRENT_DIR)/modules
+BIN=$(shell cd ~/;pwd)
+
+
+.PHONY:$(BIN)/.myctags/linux.ctags
+$(BIN)/.myctags/linux.ctags:
+	echo "generate rules";
+	@if [ ! -d $(BIN)/.mytags ];then \
+		if [ -e $(BIN)/.vim_runtime/ctags_parser/linux.ctags ];then\
+		cp -R $(BIN)/.vim_runtime/ctags_parser $(BIN)/.myctags; fi \
+	fi;
+
+
+.PHONY:appdev_env
+appdev_env:
+	@if [ ! -e $(APP_PATH)/.ctagsignore ];then \
+		echo ".git" > $(APP_PATH)/.ctagsignore; \
+		echo "svn" >> $(APP_PATH)/.ctagsignore; \
+	fi;
+	$(Q)cd $(APP_PATH); \
+	ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
+	/usr/bin/find $(APP_PATH)/ -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(APP_PATH)/cs.files;\
+	cscope -b -k -q $(APP_PATH)/cs.files;
+	@if [ -e $(APP_PATH)/.previm ];then\
+		rm $(APP_PATH)/.previm;\
+	fi;
+	echo "set tags+=$(APP_PATH)/c_tags " > $(APP_PATH)/.previm 
+
+.PHONY:clean
+clean:
+	@rm $(APP_PATH)/.previm ;\
+	$(Q)rm $(APP_PATH)/c_tags;\
+	$(Q)rm $(APP_PATH)/cscope* ;\
+	$(Q)rm $(APP_PATH)/cs.files ;\
+	@rm $(APP_PATH)/.ctagsignore
+
+3
+
+
+.PHONY:boot_env
+boot_env:
+	@if [ ! -e $(BOOT_PATH)/.ctagsignore ];then \
+		echo "svn" > $(BOOT_PATH)/.ctagsignore; \
+	fi;
+	$(Q)cd $(BOOT_PATH)/; \
+	ctags --options=NONE --options=$(BIN)/.myctags/linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
+	/usr/bin/find $(BOOT_PATH) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(BOOT_PATH)/cs.files;\
+	cscope -b -k -q $(BOOT_PATH)/cs.files;
+	@if [ -e $(BOOT_PATH)/.previm ];then\
+		rm $(BOOT_PATH)/.previm;\
+	fi;
+	@if [ ! -e $(BOOT_BSP_PATH)/.ctagsignore ];then \
+		echo "svn" > $(BOOT_BSP_PATH)/.ctagsignore; \
+		echo "hisi.ctags" >> $(BOOT_BSP_PATH)/.ctagsignore; \
+	fi;
+	$(Q)cd $(BOOT_BSP_PATH)/; \
+	ctags --options=NONE --options=$(BIN)/.myctags/linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
+	/usr/bin/find $(BOOT_BSP_PATH) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(BOOT_BSP_PATH)/cs.files;\
+	cscope -b -k -q $(BOOT_BSP_PATH)/cs.files;
+	@if [ -e $(BOOT_BSP_PATH)/.previm ];then\
+		rm $(BOOT_BSP_PATH)/.previm;\
+	fi;
+	echo "set tags=$(BOOT_PATH)/c_tags " > $(BOOT_PATH)/.previm 
+
+
+.PHONY:boot_clean
+boot_clean:
+	$(RM) $(BOOT_PATH)/c_tags;\
+	$(RM) $(BOOT_PATH)/cscope* ;\
+	$(RM) $(BOOT_PATH)/.ctagsignore;\
+	$(RM) $(BOOT_PATH)/.previm;\
+	$(RM) $(BOOT_PATH)/cs.files ;
+	$(RM) $(BOOT_BSP_PATH)/c_tags;\
+	$(RM) $(BOOT_BSP_PATH)/cscope* ;\
+	$(RM) $(BOOT_BSP_PATH)/.ctagsignore;\
+	$(RM) $(BOOT_BSP_PATH)/cs.files ;
+
+
+
+.PHONY:kernel_env
+kernel_env: $(BIN)/.myctags/linux.ctags
+	@if [ ! -e $(KERNEL_PATH)/.ctagsignore ];then \
+		echo "svn" > $(KERNEL_PATH)/.ctagsignore; \
+	fi;
+	$(Q)cd $(KERNEL_PATH)/; \
+	ctags --options=NONE --options=$(BIN)/.myctags/linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
+	/usr/bin/find $(KERNEL_PATH) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(KERNEL_PATH)/cs.files;\
+	cscope -b -k -q $(KERNEL_PATH)/cs.files;
+	@if [ -e $(KERNEL_PATH)/.previm ];then\
+		rm $(KERNEL_PATH)/.previm;\
+	fi;
+	echo "set tags=$(KERNEL_PATH)/c_tags " > $(KERNEL_PATH)/.previm 
+
+
+.PHONY:modules_env
+modules_env:
+	@if [ ! -e $(MODULES_PATH)/.ctagsignore ];then \
+		echo "svn" > $(MODULES_PATH)/.ctagsignore; \
+	fi;
+	$(Q)cd $(MODULES_PATH)/; \
+	ctags --options=NONE --options=$(BIN)/.myctags/linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
+	/usr/bin/find $(MODULES_PATH) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(MODULES_PATH)/cs.files;\
+	cscope -b -k -q $(MODULES_PATH)/cs.files;
+	@if [ -e $(MODULES_PATH)/.previm ];then\
+		rm $(MODULES_PATH)/.previm;\
+	fi;
+	echo "set tags=$(MODULES_PATH)/c_tags " > $(MODULES_PATH)/.previm 
+

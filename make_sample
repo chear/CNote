@@ -1,0 +1,13 @@
+
+all:
+	gcc -c sampe_test.c
+	gcc -o sample sampe_test.o
+
+
+##mk1:1_pointer_test.o
+##gcc -std=c99 -c 1_pointer_test.c 
+##gcc -     o 1_pointer_test 1_pointer_test.o 
+###./1_pointer_test.exe
+##chmod 77      7 ./1_pointer_test
+##./1_pointer_test
+        

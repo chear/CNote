@@ -1,0 +1,177 @@
+#===============================================================================
+# 2019 May 
+# 
+#	  Replace ctags command from
+#		"ctags -r --languages=c --c-kinds=+cdefglmnpstuvx --fields=+aiksz --extra=+q --exclude=@.ctagsignore -f c_tags; \"
+#	  to:
+#		"ctags -R --languages=c --exclude=@.ctagsignore -f c_tags; \"
+#	   
+#	   .ctagsignore contains path should format such like following:
+#			build_dir/target-arm-openwrt-linux-uclibcgnueabi/hi_gateway
+#	   not
+#			./build_dir/target-arm-openwrt-linux-uclibcgnueabi/hi_gateway/
+#
+# 2019 June
+#     Using universal-ctags replace to exuberant-ctags, command as following:
+#   		"ctags --options=NONE --options=$(BIN)/.myctags/hisi.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore"
+#   		
+# 2019 Sep
+#  	  create $(BIN) to maintaince the linux.ctags
+#
+#
+#===============================================================================
+
+
+
+
+
+#===============================================================================
+# Note: chear defined Makefile for ctags and cscope
+#===============================================================================
+ifndef chip
+chip = hi5663h
+endif
+
+CURRENT_DIR=$(shell pwd)
+Q=@
+LINUX_PATH=$(CURRENT_DIR)/openwrt/build_dir/target-arm-openwrt-linux-uclibcgnueabi/linux-$(chip)_generic/linux-3.18.11
+LINUX_HI_BOOT_PATH=$(CURRENT_DIR)/openwrt/build_dir/target-arm-openwrt-linux-uclibcgnueabi/hi_boot/hi-boot-ram
+CM_PATH=$(CURRENT_DIR)/openwrt/package/gateway/service
+OPENWRT_PATH=$(CURRENT_DIR)/openwrt
+GATEWAY_PATH=$(CURRENT_DIR)/hisilicon/gateway
+#GATEWAY_PATH=$(CURRENT_DIR)/openwrt/package/gateway
+#GATEWAY_LINUX_PATH=$(CURRENT_DIR)/solution/patch/openwrt/target/linux/hi5663h/files
+GATEWAY_LINUX_PATH=$(CURRENT_DIR)/solution/patch/linux-3.18.11
+
+VENDOR_PATH=$(CURRENT_DIR)/openwrt/package/vendors
+BIN=$(shell cd ~/;pwd)
+
+.PHONY:$(BIN)/.myctags/linux.ctags
+$(BIN)/.myctags/linux.ctags:
+	echo "generate rules";
+	@if [ ! -d $(BIN)/.mytags  ];then \
+		if [ -e $(BIN)/.vim_runtime/ctags_parser/linux.ctags  ];then\
+		cp -R $(BIN)/.vim_runtime/ctags_parser $(BIN)/.myctags; fi \
+	fi;
+
+.PHONY:service_env
+service_env:
+	@if [ ! -e $(CM_PATH)/.ctagsignore ];then \
+		echo "svn" > $(CM_PATH)/.ctagsignore; \
+	fi;
+	$(Q)cd $(CM_PATH); \
+	ctags --options=NONE --options=$(BIN)/.myctags/hisi.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
+	/usr/bin/find $(CM_PATH) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(CM_PATH)/cs.files;\
+	cscope -b -k -q $(CM_PATH)/cs.files;
+	@if [ -e $(CM_PATH)/.previm ];then\
+		rm $(CM_PATH)/.previm;\
+	fi;
+	echo "set tags=$(CM_PATH)/c_tags " > $(CM_PATH)/.previm 
+
+.PHONY:des_clean
+des_clean:
+	$(RM) $(CM_PATH)/.previm ;\
+	$(RM) $(CM_PATH)/c_tags;\
+	$(RM) $(CM_PATH)/cscope* ;\
+	$(RM) $(CM_PATH)/cs.files ;\
+	$(RM) $(CM_PATH)/.ctagsignore;
+	$(RM) $(GATEWAY_PATH)/.previm ;\
+	$(RM) $(GATEWAY_PATH)/c_tags;\
+	$(RM) $(GATEWAY_PATH)/cscope* ;\
+	$(RM) $(GATEWAY_PATH)/cs.files ;\
+	$(RM) $(GATEWAY_PATH)/.ctagsignore;
+	$(RM) $(OPENWRT_PATH)/.previm ;\
+	$(RM) $(OPENWRT_PATH)/c_tags;\
+	$(RM) $(OPENWRT_PATH)/cscope* ;\
+	$(RM) $(OPENWRT_PATH)/cs.files ;\
+	$(RM) $(OPENWRT_PATH)/.ctagsignore;
+
+
+.PHONY:gateway_env
+gateway_env:
+	@if [ ! -e $(GATEWAY_PATH)/.ctagsignore ];then \
+		echo "svn" > $(GATEWAY_PATH)/.ctagsignore; \
+		echo "hisi.ctags" >> $(GATEWAY_PATH)/.ctagsignore; \
+	fi;
+	@if [ ! -e $(GATEWAY_PATH)/hisi.ctags ];then \
+		echo "--langdef=hisi{base=C}" > $(GATEWAY_PATH)/hisi.ctags; \
+		echo "--kinddef-hisi=s,syscall,system calls" >> $(GATEWAY_PATH)/hisi.ctags; \
+		echo "--regex-hisi=/HI_DEF_IPC\(([^, )]+)[\),]*/\1/s/" >> $(GATEWAY_PATH)/hisi.ctags; \
+	fi;
+	$(Q)cd $(GATEWAY_PATH); \
+	ctags --options=NONE --options=./hisi.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
+	/usr/bin/find $(GATEWAY_PATH) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(GATEWAY_PATH)/cs.files;\
+	cscope -b -k -q $(GATEWAY_PATH)/cs.files;
+	@if [ -e $(GATEWAY_PATH)/.previm ];then\
+		rm $(GATEWAY_PATH)/.previm;\
+	fi;
+
+	@if [ ! -e $(GATEWAY_LINUX_PATH)/.ctagsignore ];then \
+		echo "svn" > $(GATEWAY_LINUX_PATH)/.ctagsignore; \
+		echo "linux.ctags" >> $(GATEWAY_LINUX_PATH)/.ctagsignore; \
+	fi;
+	@if [ ! -e $(GATEWAY_LINUX_PATH)/linux.ctags ];then \
+		echo "--langdef=linux{base=C}" > $(GATEWAY_LINUX_PATH)/linux.ctags; \
+		echo "--kinddef-linux=s,syscall,system calls" >> $(GATEWAY_LINUX_PATH)/linux.ctags; \
+		echo "--regex-linux=/SYSCALL_DEFINE[0-9]\(([^, )]+)[\),]*/\1/s/" >> $(GATEWAY_LINUX_PATH)/linux.ctags; \
+	fi;
+	$(Q)cd $(GATEWAY_LINUX_PATH); \
+	ctags --options=NONE --options=./linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore; \
+	/usr/bin/find $(GATEWAY_LINUX_PATH) -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(GATEWAY_LINUX_PATH)/cs.files;\
+	cscope -b -k -q $(GATEWAY_LINUX_PATH)/cs.files;
+	@if [ -e $(GATEWAY_LINUX_PATH)/.previm ];then\
+		rm $(GATEWAY_LINUX_PATH)/.previm;\
+	fi;
+	echo "set tags=$(GATEWAY_PATH)/c_tags " > $(GATEWAY_PATH)/.previm 
+	echo "set tags+=$(GATEWAY_LINUX_PATH)/c_tags " >> $(GATEWAY_PATH)/.previm 
+
+.PHONY:gateway_clean
+gateway_clean:
+	$(RM) $(GATEWAY_PATH)/.previm ;\
+	$(RM) $(GATEWAY_PATH)/c_tags;\
+	$(RM) $(GATEWAY_PATH)/cscope* ;\
+	$(RM) $(GATEWAY_PATH)/cs.files ;\
+	$(RM) $(GATEWAY_PATH)/.ctagsignore;
+
+
+.PHONY:vendors_env
+vendors_env:
+	@if [ ! -e $(VENDOR_PATH)/.ctagsignore ];then \
+		echo "svn" > $(VENDOR_PATH)/.ctagsignore; \
+	fi;
+	$(Q)cd $(VENDOR_PATH); \
+	ctags -f c_tags -R --languages=c --langmap=c:+.h -I HI_DEF_IPC+ --extra=+q --exclude=@.ctagsignore; \
+	/usr/bin/find $(VENDOR_PATH) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(VENDOR_PATH)/cs.files;\
+	cscope -b -k -q $(VENDOR_PATH)/cs.files;
+	@if [ -e $(VENDOR_PATH)/.previm ];then\
+		rm $(VENDOR_PATH)/.previm;\
+	fi;
+	echo "set tags=$(VENDOR_PATH)/c_tags " > $(VENDOR_PATH)/.previm 
+
+
+.PHONY:linux_env
+linux_env:
+	@if [ ! -e $(LINUX_PATH)/.ctagsignore ];then \
+		echo "svn" > $(LINUX_PATH)/.ctagsignore; \
+	fi;
+	$(Q)cd $(LINUX_PATH); \
+	ctags --options=NONE --options=$(BIN)/.myctags/linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore; \
+	/usr/bin/find $(LINUX_PATH) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(LINUX_PATH)/cs.files;\
+	cscope -b -k -q $(LINUX_PATH)/cs.files;
+	@if [ ! -e $(LINUX_HI_BOOT_PATH)/.ctagsignore ];then \
+		echo "svn" > $(LINUX_HI_BOOT_PATH)/.ctagsignore; \
+	fi;
+	$(Q)cd $(LINUX_HI_BOOT_PATH); \
+	ctags --options=NONE --options=$(BIN)/.myctags/linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore; \
+	/usr/bin/find $(LINUX_HI_BOOT_PATH) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(LINUX_HI_BOOT_PATH)/cs.files;\
+	cscope -b -k -q $(LINUX_HI_BOOT_PATH)/cs.files;
+
+
+.PHONY:vendors_clean
+vendors_clean:
+	$(RM) $(VENDOR_PATH)/.previm ;\
+	$(RM) $(VENDOR_PATH)/c_tags;\
+	$(RM) $(VENDOR_PATH)/cscope* ;\
+	$(RM) $(VENDOR_PATH)/cs.files ;\
+	$(RM) $(VENDOR_PATH)/.ctagsignore;
+
