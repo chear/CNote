@@ -1,7 +1,7 @@
 
 all:
-	gcc -c sampe_test.c
-	gcc -o sample sampe_test.o
+	gcc -c sample_test.c
+	gcc -o sample sample_test.o
 
 
 ##mk1:1_pointer_test.o

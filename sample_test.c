@@ -2,6 +2,10 @@
 #include <sys/time.h>
 #include <time.h>
 
+
+#define MAX(x,y) (x)>(y)?(x):(y)
+
+
 int main (int argc, char **argv){
 
     int a=4,b=1;
@@ -72,6 +76,8 @@ int main (int argc, char **argv){
 //    ui_reg_val = ui_reg_val << 16;
 //    printf ("2.  ui_reg_val = %x \n", ui_reg_val);
 
+
+    printf ("get result %d \n", MAX(1!=1,1!=2));
     return 0;
 }
 

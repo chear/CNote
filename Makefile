@@ -2,6 +2,7 @@
 CFLAGS=-ansi -Wall -pedantic -std=c99 
 LFLAGS=-lm 
 CC=gcc
+Q=@
 
 ## -ansi 		ANSI/ISO C标准
 ## -Wall		GCC产生尽可能多的警告信息
@@ -9,7 +10,10 @@ CC=gcc
 ## -std=c99		C-99 standard
 
 ## To make all
-all: mkApp 1_ 3_ 4_ 5_ 7_
+all: mkApp 1_ 3_ 4_ 5_ 7_ 8_
+	$(Q)echo "-----------------------------------------------------" 	
+	$(Q)echo "---------------  Finish  ^_^ ------------------------" 	
+	$(Q)echo "-----------------------------------------------------" 	
 
 
 ## sample to make the whole App
@@ -52,6 +56,10 @@ $(EXECUTABLE): $(OBJECTS)
 
 7_:7_ioctl.c
 	$(CC) $(CFLAGS) -o 7_ioctl 7_ioctl.c 
+
+8_:8_macro_sample.c
+	$(CC) -o 8_macro 8_macro_sample.c 
+
 
 ## Old one should be remove
 ##all:mk1 mk2
