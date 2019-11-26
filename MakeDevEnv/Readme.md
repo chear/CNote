@@ -5,4 +5,4 @@
     for ZyXEL platform based on econet 
 
 3. Makefile.ecdev
-    for econet origin platfrom
+    for Econet origin platfrom

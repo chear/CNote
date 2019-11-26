@@ -1,4 +1,8 @@
 #===============================================================================
+# 2019 Sep
+# 	 Create --langdef=hisi_hal{base=C} in hisi.ctags to parse "HAL_DECLARE_INTF" marco 
+#
+#
 # 2019 May 
 # 
 #	  Replace ctags command from
@@ -29,7 +33,7 @@
 # Note: chear defined Makefile for ctags and cscope
 #===============================================================================
 ifndef chip
-chip = hi5663h
+chip = hsan
 endif
 
 CURRENT_DIR=$(shell pwd)
@@ -87,6 +91,14 @@ des_clean:
 	$(RM) $(OPENWRT_PATH)/.ctagsignore;
 
 
+.PHONY:hisi_tags
+hisi_tags:
+	@if [ ! -e $(GATEWAY_PATH)/hisi.ctags ];then \
+		cp $(BIN)/.vim_runtime/ctags_parser/hisi.ctags $(GATEWAY_PATH)/hisi.ctags;  \
+	fi;
+
+
+
 .PHONY:gateway_env
 gateway_env:
 	@if [ ! -e $(GATEWAY_PATH)/.ctagsignore ];then \
@@ -94,9 +106,7 @@ gateway_env:
 		echo "hisi.ctags" >> $(GATEWAY_PATH)/.ctagsignore; \
 	fi;
 	@if [ ! -e $(GATEWAY_PATH)/hisi.ctags ];then \
-		echo "--langdef=hisi{base=C}" > $(GATEWAY_PATH)/hisi.ctags; \
-		echo "--kinddef-hisi=s,syscall,system calls" >> $(GATEWAY_PATH)/hisi.ctags; \
-		echo "--regex-hisi=/HI_DEF_IPC\(([^, )]+)[\),]*/\1/s/" >> $(GATEWAY_PATH)/hisi.ctags; \
+		cp $(BIN)/.vim_runtime/ctags_parser/hisi.ctags $(GATEWAY_PATH)/hisi.ctags;  \
 	fi;
 	$(Q)cd $(GATEWAY_PATH); \
 	ctags --options=NONE --options=./hisi.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
@@ -105,15 +115,12 @@ gateway_env:
 	@if [ -e $(GATEWAY_PATH)/.previm ];then\
 		rm $(GATEWAY_PATH)/.previm;\
 	fi;
-
 	@if [ ! -e $(GATEWAY_LINUX_PATH)/.ctagsignore ];then \
 		echo "svn" > $(GATEWAY_LINUX_PATH)/.ctagsignore; \
 		echo "linux.ctags" >> $(GATEWAY_LINUX_PATH)/.ctagsignore; \
 	fi;
 	@if [ ! -e $(GATEWAY_LINUX_PATH)/linux.ctags ];then \
-		echo "--langdef=linux{base=C}" > $(GATEWAY_LINUX_PATH)/linux.ctags; \
-		echo "--kinddef-linux=s,syscall,system calls" >> $(GATEWAY_LINUX_PATH)/linux.ctags; \
-		echo "--regex-linux=/SYSCALL_DEFINE[0-9]\(([^, )]+)[\),]*/\1/s/" >> $(GATEWAY_LINUX_PATH)/linux.ctags; \
+		cp $(BIN)/.vim_runtime/ctags_parser/linux.ctags $(GATEWAY_LINUX_PATH)/linux.ctags; \
 	fi;
 	$(Q)cd $(GATEWAY_LINUX_PATH); \
 	ctags --options=NONE --options=./linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore; \
