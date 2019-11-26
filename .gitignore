@@ -8,7 +8,7 @@
 # any tracked files which get ignored after the change.
 #
 # Normal rules (sorted alphabetically)
-#
+*.out
 .*
 *.a
 *.asn1.[ch]
