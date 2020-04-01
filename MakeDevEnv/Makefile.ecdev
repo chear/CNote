@@ -2,113 +2,180 @@
 # Macro
 #===============================================================================
 CURRENT_DIR=$(shell pwd)
+BIN=$(shell cd ~/;pwd)
+PARSER_PATH=$(BIN)/.vim_runtime/ctags_parser
+
 Q=@
 BOOT_PATH=$(CURRENT_DIR)/bootrom
-APP_PATH=$(CURRENT_DIR)/apps
+BOOT_PATH_2=$(CURRENT_DIR)/linux-ecnt/drivers/mtd/chips
+BOOT_PATH_3=$(CURRENT_DIR)/global_inc/modules/spi
+
+APP_PATH=$(CURRENT_DIR)/apps/private
 KERNEL_PATH=$(CURRENT_DIR)/linux-3.18.21
 MODULES_PATH=$(CURRENT_DIR)/modules
-BIN=$(shell cd ~/;pwd)
+MSTC_FLASH_TOOLS_PATH=/home/chear/MTK/misc_for_flash_programming
+IMG_PATH=$(CURRENT_DIR)/Project/images
+TOOLS_PATH=$(CURRENT_DIR)/tools
 
+GLOBAL_HAED=$(CURRENT_DIR)/global_inc
 
-.PHONY:$(BIN)/.myctags/linux.ctags
-$(BIN)/.myctags/linux.ctags:
-	echo "generate rules";
-	@if [ ! -d $(BIN)/.mytags ];then \
-		if [ -e $(BIN)/.vim_runtime/ctags_parser/linux.ctags ];then\
-		cp -R $(BIN)/.vim_runtime/ctags_parser $(BIN)/.myctags; fi \
+#######################   function define begin  ######################
+define GenCtagsingore
+	echo "create .ctagsignore";
+	@if [ ! -e $(1)/.ctagsignore  ];then \
+		echo "svn" >> $(1)/.ctagsignore; \
+		echo "git" >> $(1)/.ctagsignore; \
+		echo "*.swap" >> $(1)/.ctagsignore; \
+		echo "*.ts" >> $(1)/.ctagsignore; \
+		echo "*.so.1" >> $(1)/.ctagsignore; \
+		echo "*.so.2" >> $(1)/.ctagsignore; \
 	fi;
+endef
+
+
+define GenerateHisiCtags
+	echo "generate hisi rules";
+	$(call GenCtagsingore,$(1))
+	$(Q)cd $(1); \
+	ctags --options=NONE --options=$(PARSER_PATH)/hisi.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
+	/usr/bin/find $(1) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(1)/cs.files;\
+	cscope -b -k -q $(1)/cs.files;
+	@if [ -e $(1)/.previm  ];then \
+		rm $(1)/.previm;\
+	fi;
+	echo "set tags=$(1)/c_tags " > $(1)/.previm 
+endef
+
+
+define GenerateLinuxCtags
+	$(call GenCtagsingore,$(1))
+	$(Q)cd $(1); \
+	ctags --options=NONE --options=$(PARSER_PATH)/linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
+	/usr/bin/find $(1) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(1)/cs.files;\
+	cscope -b -k -q $(1)/cs.files;
+	@if [ -e $(1)/.previm  ];then\
+		rm $(1)/.previm;\
+	fi;
+	echo "set tags=$(1)/c_tags " > $(1)/.previm 
+endef
+
+
+define Clean
+$(RM) $(1)/.previm ;\
+	$(RM) $(1)/c_tags;\
+	$(RM) $(1)/cscope* ;\
+	$(RM) $(1)/cs.files ;\
+	$(RM) $(1)/.ctagsignore;
+endef
+#######################   function define end   ######################
 
 
 .PHONY:appdev_env
-appdev_env:
-	@if [ ! -e $(APP_PATH)/.ctagsignore ];then \
-		echo ".git" > $(APP_PATH)/.ctagsignore; \
-		echo "svn" >> $(APP_PATH)/.ctagsignore; \
-	fi;
-	$(Q)cd $(APP_PATH); \
-	ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
-	/usr/bin/find $(APP_PATH)/ -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(APP_PATH)/cs.files;\
-	cscope -b -k -q $(APP_PATH)/cs.files;
-	@if [ -e $(APP_PATH)/.previm ];then\
-		rm $(APP_PATH)/.previm;\
-	fi;
-	echo "set tags+=$(APP_PATH)/c_tags " > $(APP_PATH)/.previm 
+appdev_env:appdev_clean
+	echo "generate app env"
+	$(call GenerateLinuxCtags,$(APP_PATH))
 
-.PHONY:clean
-clean:
-	@rm $(APP_PATH)/.previm ;\
-	$(Q)rm $(APP_PATH)/c_tags;\
-	$(Q)rm $(APP_PATH)/cscope* ;\
-	$(Q)rm $(APP_PATH)/cs.files ;\
-	@rm $(APP_PATH)/.ctagsignore
+
+.PHONY:appdev_clean
+appdev_clean:
+	$(call Clean,$(APP_PATH))
+
+
+.PHONY:des_clean
+des_clean: appdev_clean boot_clean kernel_clean modules_clean
 
 
 .PHONY:boot_env
-boot_env:
-	@if [ ! -e $(BOOT_PATH)/.ctagsignore ];then \
-		echo "svn" > $(BOOT_PATH)/.ctagsignore; \
+boot_env:boot_clean
+	echo "generate bootloader env"
+	@if [ ! -e $(BOOT_PATH)/.ctagsignore  ];then \
+		echo "bootram/flash/spi_nand_flash.c" >> $(BOOT_PATH)/.ctagsignore; \
+		echo "bootram/flash/spi_nor_flash.c" >> $(BOOT_PATH)/.ctagsignore; \
 	fi;
-	$(Q)cd $(BOOT_PATH)/; \
-	ctags --options=NONE --options=$(BIN)/.myctags/linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
-	/usr/bin/find $(BOOT_PATH) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(BOOT_PATH)/cs.files;\
-	cscope -b -k -q $(BOOT_PATH)/cs.files;
-	@if [ -e $(BOOT_PATH)/.previm ];then\
-		rm $(BOOT_PATH)/.previm;\
-	fi;
-	@if [ ! -e $(BOOT_PATH)/.ctagsignore ];then \
-		echo "svn" > $(BOOT_PATH)/.ctagsignore; \
-		echo "hisi.ctags" >> $(BOOT_PATH)/.ctagsignore; \
-	fi;
-	$(Q)cd $(BOOT_PATH)/; \
-	ctags --options=NONE --options=$(BIN)/.myctags/linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
-	/usr/bin/find $(BOOT_PATH) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(BOOT_PATH)/cs.files;\
-	cscope -b -k -q $(BOOT_PATH)/cs.files;
-	@if [ -e $(BOOT_PATH)/.previm ];then\
-		rm $(BOOT_PATH)/.previm;\
-	fi;
-	echo "set tags=$(BOOT_PATH)/c_tags " > $(BOOT_PATH)/.previm 
+	$(call GenerateLinuxCtags,$(BOOT_PATH))
+	$(call GenerateLinuxCtags,$(BOOT_PATH_2))
+	$(call GenerateLinuxCtags,$(BOOT_PATH_3))
+	echo "set tags+=$(BOOT_PATH_2)/c_tags " >> $(BOOT_PATH)/.previm 
+	echo "set tags+=$(BOOT_PATH_3)/c_tags " >> $(BOOT_PATH)/.previm 
 
 
 .PHONY:boot_clean
 boot_clean:
-	$(RM) $(BOOT_PATH)/c_tags;\
-	$(RM) $(BOOT_PATH)/cscope* ;\
-	$(RM) $(BOOT_PATH)/.ctagsignore;\
-	$(RM) $(BOOT_PATH)/.previm;\
-	$(RM) $(BOOT_PATH)/cs.files ;
-	$(RM) $(BOOT_BSP_PATH)/c_tags;\
-	$(RM) $(BOOT_BSP_PATH)/cscope* ;\
-	$(RM) $(BOOT_BSP_PATH)/.ctagsignore;\
-	$(RM) $(BOOT_BSP_PATH)/cs.files ;
-
+	$(call Clean,$(BOOT_PATH))
 
 
 .PHONY:kernel_env
-kernel_env: $(BIN)/.myctags/linux.ctags
-	@if [ ! -e $(KERNEL_PATH)/.ctagsignore ];then \
-		echo "svn" > $(KERNEL_PATH)/.ctagsignore; \
-	fi;
-	$(Q)cd $(KERNEL_PATH)/; \
-	ctags --options=NONE --options=$(BIN)/.myctags/linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
-	/usr/bin/find $(KERNEL_PATH) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(KERNEL_PATH)/cs.files;\
-	cscope -b -k -q $(KERNEL_PATH)/cs.files;
-	@if [ -e $(KERNEL_PATH)/.previm ];then\
-		rm $(KERNEL_PATH)/.previm;\
-	fi;
-	echo "set tags=$(KERNEL_PATH)/c_tags " > $(KERNEL_PATH)/.previm 
+kernel_env: 
+	echo "generate kernel env"
+	$(call GenerateLinuxCtags,$(KERNEL_PATH))
+
+.PHONY:kernel_clean
+kernel_clean:
+	$(call Clean,$(KERNEL_PATH))
 
 
 .PHONY:modules_env
 modules_env:
-	@if [ ! -e $(MODULES_PATH)/.ctagsignore ];then \
-		echo "svn" > $(MODULES_PATH)/.ctagsignore; \
-	fi;
-	$(Q)cd $(MODULES_PATH)/; \
-	ctags --options=NONE --options=$(BIN)/.myctags/linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;\
-	/usr/bin/find $(MODULES_PATH) -name "*.c" -o -name "*.h" -o -name "*.java" -o -name "*.cpp" -o -name "*.py" -o -name "*.sh" -o -name "*.lua" > $(MODULES_PATH)/cs.files;\
-	cscope -b -k -q $(MODULES_PATH)/cs.files;
-	@if [ -e $(MODULES_PATH)/.previm ];then\
-		rm $(MODULES_PATH)/.previm;\
-	fi;
-	echo "set tags=$(MODULES_PATH)/c_tags " > $(MODULES_PATH)/.previm 
+	echo "generate kernel env"
+	$(call GenerateLinuxCtags,$(MODULES_PATH))
+
+
+.PHONY:modules_clean
+modules_clean:
+	$(call Clean,$(MODULES_PATH))
+
+
+.PHONY:misctools_env
+misctools_env:
+	$(call GenerateLinuxCtags,$(MSTC_FLASH_TOOLS_PATH))
+
+
+.PHONY:misc_image
+misc_image:
+#	./addoob $(IMG_PATH)/tclinux_allinone_nand $(IMG_PATH)/tclinux_allinone_nand_ecc 2048 64
+#	./addhdr $(IMG_PATH)/tclinux_allinone_nand_ecc ap_mstc.bin
+	./addoob $(IMG_PATH)/tclinux_allinone_nand tclinux_allinone_nand_ecc 2048 64
+	./addhdr tclinux_allinone_nand_ecc ap_mstc.bin
+	
+
+
+.PHONY:tools_env
+tools_env:
+	$(call GenerateLinuxCtags,$(TOOLS_PATH))
+
+
+building:checkprofile
+LAST_PROFILE_COOKIE := ${CURRENT_DIR}/.profile
+LAST_PROFILE        := $(strip $(shell cat $(LAST_PROFILE_COOKIE) 2>/dev/null))
+
+ifeq ($(strip $(PROFILE)),)
+	PROFILE=$(LAST_PROFILE)
+endif
+
+
+checkprofile:
+	@echo "check .xprofile exists or not." 
+	@echo "$(PROFILE)." 
+	@echo "$(LAST_PROFILE)." 
+	@if [ "$(LAST_PROFILE)" = ""  ]; then \
+		if [ "$(PROFILE)" = ""  ]; then \
+			echo "last profile its null ."; \
+		else \
+			echo "$(PROFILE)" > $(LAST_PROFILE_COOKIE); \
+		fi\
+	else \
+		echo "..."; \
+	fi
+
+
+IMG_PATH=$(CURRENT_DIR)/Project/images
+misc_image:
+	rm -f ap_mstc.bin
+	./addoob $(IMG_PATH)/tclinux_allinone_nand $(IMG_PATH)/tclinux_allinone_nand_ecc 2048 64
+	./addhdr $(IMG_PATH)/tclinux_allinone_nand_ecc ap_mstc.bin
+
+
+global_evn:
+	@echo "global head env." 
+	$(call GenerateLinuxCtags,$(GLOBAL_HEAD))
 

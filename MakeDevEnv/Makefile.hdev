@@ -24,6 +24,9 @@
 #
 # 2019 Dec
 # 	  optimize this Makefile script, and functiont to operate ctags
+#
+# 2020 Apr
+# 	  add chip verify to switch GATEWAY_PATH 
 #===============================================================================
 
 #===============================================================================
@@ -48,6 +51,10 @@ GATEWAY_PATH=$(CURRENT_DIR)/hisilicon/gateway
 GATEWAY_LINUX_PATH=$(CURRENT_DIR)/solution/patch/linux-3.18.11
 VENDOR_PATH=$(CURRENT_DIR)/openwrt/package/vendors
 BUSYBOX_PATH=$(OPENWRT_PATH)/build_dir/target-arm-openwrt-linux-uclibcgnueabi/busybox-1.22.1
+
+ifeq ($(strip $(chip)),sd5116)
+GATEWAY_LINUX_PATH=$(CURRENT_DIR)/solution/patch/openwrt/target/linux/$(chip)/files
+endif
 
 #######################   function define begin  ######################
 define GenerateHisiCtags
@@ -91,14 +98,6 @@ define Clean
 endef
 #######################   function define end   ######################
 
-
-.PHONY:$(BIN)/.myctags/linux.ctags
-$(BIN)/.myctags/linux.ctags:
-	echo "generate rules";
-	@if [ ! -d $(BIN)/.mytags  ];then \
-		if [ -e $(BIN)/.vim_runtime/ctags_parser/linux.ctags  ];then\
-		cp -R $(BIN)/.vim_runtime/ctags_parser $(BIN)/.myctags; fi \
-	fi;
 
 .PHONY:service_env
 service_env:
