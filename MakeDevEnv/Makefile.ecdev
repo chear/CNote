@@ -8,7 +8,7 @@ PARSER_PATH=$(BIN)/.vim_runtime/ctags_parser
 Q=@
 BOOT_PATH=$(CURRENT_DIR)/bootrom
 BOOT_PATH_2=$(CURRENT_DIR)/linux-ecnt/drivers/mtd/chips
-BOOT_PATH_3=$(CURRENT_DIR)/global_inc/modules/spi
+BOOT_PATH_3=$(CURRENT_DIR)/global_inc/modules/
 
 APP_PATH=$(CURRENT_DIR)/apps/private
 KERNEL_PATH=$(CURRENT_DIR)/linux-3.18.21
@@ -21,10 +21,10 @@ GLOBAL_HAED=$(CURRENT_DIR)/global_inc
 
 #######################   function define begin  ######################
 define GenCtagsingore
-	echo "create .ctagsignore";
+	echo "create .ctagsignore $(1)";
 	@if [ ! -e $(1)/.ctagsignore  ];then \
-		echo "svn" >> $(1)/.ctagsignore; \
-		echo "git" >> $(1)/.ctagsignore; \
+		echo ".svn" >> $(1)/.ctagsignore; \
+		echo ".git" >> $(1)/.ctagsignore; \
 		echo "*.swap" >> $(1)/.ctagsignore; \
 		echo "*.ts" >> $(1)/.ctagsignore; \
 		echo "*.so.1" >> $(1)/.ctagsignore; \
@@ -91,7 +91,13 @@ boot_env:boot_clean
 	@if [ ! -e $(BOOT_PATH)/.ctagsignore  ];then \
 		echo "bootram/flash/spi_nand_flash.c" >> $(BOOT_PATH)/.ctagsignore; \
 		echo "bootram/flash/spi_nor_flash.c" >> $(BOOT_PATH)/.ctagsignore; \
+		echo "bootram/flash/newspiflash.c" >> $(BOOT_PATH)/.ctagsignore; \
+		echo "bootram/include/spi_nand_flash.h" >> $(BOOT_PATH)/.ctagsignore; \
+		echo "bootram/flash/spi_controller.c" >>  $(BOOT_PATH)/.ctagsignore; \
+		echo "bootram/bootram_sram" >> $(BOOT_PATH)/.ctagsignore; \
+		echo "bootram/bootram_sram/Makefile" >> $(BOOT_PATH)/.ctagsignore; \
 	fi;
+
 	$(call GenerateLinuxCtags,$(BOOT_PATH))
 	$(call GenerateLinuxCtags,$(BOOT_PATH_2))
 	$(call GenerateLinuxCtags,$(BOOT_PATH_3))
