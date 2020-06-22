@@ -54,6 +54,7 @@ BUSYBOX_PATH=$(OPENWRT_PATH)/build_dir/target-arm-openwrt-linux-uclibcgnueabi/bu
 
 ifeq ($(strip $(chip)),sd5116)
 GATEWAY_LINUX_PATH=$(CURRENT_DIR)/solution/patch/openwrt/target/linux/$(chip)/files
+LINUX_HI_BOOT_PATH=$(CURRENT_DIR)/openwrt/build_dir/target-arm-openwrt-linux-uclibcgnueabi/hi_boot/hiboot/hi-boot-ram/hi-boot-ram-1.0.0
 endif
 
 #######################   function define begin  ######################

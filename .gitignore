@@ -146,5 +146,8 @@ test_app
 5_pipe
 7_ioctl
 7_ioctl_arm
+4_process_fork
+8_macro
 aaaa*
 sample
+

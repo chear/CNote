@@ -16,8 +16,8 @@ MODULES_PATH=$(CURRENT_DIR)/modules
 MSTC_FLASH_TOOLS_PATH=/home/chear/MTK/misc_for_flash_programming
 IMG_PATH=$(CURRENT_DIR)/Project/images
 TOOLS_PATH=$(CURRENT_DIR)/tools
-
-GLOBAL_HAED=$(CURRENT_DIR)/global_inc
+APP_OPEN_PATH=$(CURRENT_DIR)/apps/opensource
+GLOBAL_HEAD=$(CURRENT_DIR)/global_inc
 
 #######################   function define begin  ######################
 define GenCtagsingore
@@ -81,8 +81,20 @@ appdev_clean:
 	$(call Clean,$(APP_PATH))
 
 
+.PHONY:appopen_env
+appopen_env:appopen_clean
+	echo "generate app env"
+	$(call GenerateLinuxCtags,$(APP_OPEN_PATH))
+
+
+.PHONY:appopen_clean
+appopen_clean:
+	$(call Clean,$(APP_OPEN_PATH))
+
+
+
 .PHONY:des_clean
-des_clean: appdev_clean boot_clean kernel_clean modules_clean
+des_clean: appdev_clean boot_clean kernel_clean modules_clean appopen_clean
 
 
 .PHONY:boot_env
