@@ -1,0 +1,71 @@
+ifndef pf
+pf = hsan
+endif
+
+CURRENT_DIR := $(shell pwd)
+
+#obj-m+=netlink_kernel_sample.o
+
+ifeq ($(strip $(pf)),hsan)
+
+include $(CURRENT_DIR)/../script/env.mk
+
+HI_CFLAGS += -I$(HI_KERNEL_INC_DIR)
+HI_CFLAGS += -I$(HI_GATEWAY_ROOT_DIR)/include
+
+.PHONY:hisi_modules
+hisi_modules: 
+	echo "Begin building"
+	echo "1. -- $(CURRENT_DIR)"
+	echo "2. -- $(MAKEFLAGS)"
+	echo "3. HI_KERNEL_DIR  -- $(HI_KERNEL_DIR)"
+	echo "4. CROSS_COMPILE  -- $(CROSS_COMPILE)"
+
+	make $(HI_MAKEFLAGS) ARCH=$(ARCH) -C $(HI_KERNEL_DIR) EXTRA_CFLAGS+="$(HI_CFLAGS) "   M=$(CURRENT_DIR) 
+	echo "End building"
+
+.PHONY:sample
+sample:
+	$(CC) -c netlink_user_sample.c
+	$(CC) -o netlink_sample netlink_user_sample.o
+
+
+.PHONY:all
+all:hisi_modules sample
+
+else ifeq ($(strip $(pf)),x86)
+
+ifeq ($(KERNELRELEASE),)
+KDIR:=/lib/modules/$(shell uname -r)/build
+
+modules:
+	$(MAKE) -C $(KDIR) M=$(CURRENT_DIR) modules
+
+sample:
+	gcc -c netlink_user_sample.c
+	gcc -o netlink_sample netlink_user_sample.o
+
+
+
+modules_install:
+	$(MAKE) -C $(KDIR) M=$(CURRENT_DIR) modules_install
+
+clean:
+	rm -rf *.o *.ko .depend *.mod.o *.mod.c Module.* modules.* 
+
+.PHONY:modules modules_install clean
+else
+	obj-m :=netlink_kernel_sample.o
+endif
+endif
+
+
+
+clean:
+	rm $(CURRENT_DIR)/*.ko
+	rm $(CURRENT_DIR)/*.o
+	rm $(CURRENT_DIR)/*.mod.c
+	rm $(CURRENT_DIR)/netlink_sample
+
+
+	
