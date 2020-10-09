@@ -1,0 +1,3 @@
+PARSER_PATH = /home/chear/.vim_runtime/ctags_parser
+all:
+	ctags  --options=$(PARSER_PATH)/linux.ctags --langmap=c:+.h --extras=+q --if0=no -o c_tags -R --exclude=@.ctagsignore;
