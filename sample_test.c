@@ -5,12 +5,25 @@
 
 #define MAX(x,y) (x)>(y)?(x):(y)
 
+int getMfgMode(){
+
+    return  -1;
+}
 
 int main (int argc, char **argv){
 
     int a=4,b=1;
     int c=0;
-
+    char * vendor;
+    int ret =0;
+    if (argc = 1){
+        strncpy(vendor , (char*)argv[1], sizeof(vendor));
+        ret =  strncmp (vendor , "chwl" ,4);
+        printf("ret = %d \r\n");
+        if (!(strncmp (vendor , "chwl" ,4)==0) && !( strncmp (vendor , "ahsr" ,4) ==0) && (!(strncmp (vendor , "twcw" ,4)==0 )))
+              printf("vendor error \r\n");
+    } 
+#if 0
     unsigned int delete_time = 1509;
     unsigned int ms = 498437;
     unsigned int sec =  1562752329;
@@ -36,6 +49,13 @@ int main (int argc, char **argv){
     } else {
         printf(" no \n");
     }
+
+GOTO1:
+    printf("goto 1 \n");
+GOTO2:
+    printf("goto 2 \n");
+
+
 
 //    printf(" %u,   %u\n",sec * 1000 , ms/1000);
 //
@@ -78,11 +98,9 @@ int main (int argc, char **argv){
 
 
     printf ("get result %d \n", MAX(1!=1,1!=2));
+#endif    
     return 0;
 }
 
 
-int getMfgMode(){
 
-    return  -1;
-}

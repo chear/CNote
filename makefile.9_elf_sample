@@ -1,0 +1,51 @@
+
+
+all:ret_1 ret_2 ret_3 ret_4 
+	echo "makeing"
+#	make -f makefile.9_elf_sample clean
+#	gcc -DRETURN_1 -g -c ./9_elf_sample.c 
+#	gcc -g -o ret1 9_elf_sample.o
+#	gcc -DRETURN_2 -o ret2 -c ./9_elf_sample.c 
+#	gcc -DRETURN_3 -o ret3 -c ./9_elf_sample.c
+#	gcc -DRETURN_4 -o ret4 -c ./9_elf_sample.c 
+
+
+
+ret_1:
+	make -f makefile.9_elf_sample clean 
+	gcc -DRETURN_1 -g -c ./9_elf_sample.c 
+	gcc -g -o ret1 9_elf_sample.o
+	objdump -DS 9_elf_sample.o > obj1.txt
+
+ret_2:ret1
+	make -f makefile.9_elf_sample clean
+	gcc -DRETURN_2 -g -c ./9_elf_sample.c 
+	gcc -g -o ret2 9_elf_sample.o
+	objdump -DS 9_elf_sample.o > obj2.txt
+
+ret_3:ret2
+	make -f makefile.9_elf_sample clean
+	gcc -DRETURN_3 -g -c ./9_elf_sample.c 
+	gcc -g -o ret3 9_elf_sample.o
+	objdump -DS 9_elf_sample.o > obj3.txt
+
+ret_4:ret3
+	make -f makefile.9_elf_sample clean
+	gcc -DRETURN_4 -g -c ./9_elf_sample.c 
+	gcc -g -o ret4 9_elf_sample.o
+	objdump -DS 9_elf_sample.o > obj4.txt
+
+
+clean:
+	rm -f 9_elf_sample.o
+
+disclean: clean
+	rm -f ret1 ret2 ret3 ret4
+	rm -f ret1.txt ret2.txt ret3.txt ret4.txt
+	rm -f obj1.txt obj2.txt obj3.txt obj4.txt
+
+readelf: ret1 ret2 ret3 ret4
+	readelf -a ret1 > ret1.txt
+	readelf -a ret2 > ret2.txt
+	readelf -a ret3 > ret3.txt
+	readelf -a ret4 > ret4.txt

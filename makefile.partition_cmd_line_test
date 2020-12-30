@@ -1,7 +1,7 @@
 
 all:
-	gcc -g -c sample_test.c
-	gcc -g -o sample sample_test.o
+	gcc -g -c -I./include partition_cmd_line_test.c
+	gcc -g -o test partition_cmd_line_test.o
 
 
 ##mk1:1_pointer_test.o

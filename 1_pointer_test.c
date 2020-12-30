@@ -8,6 +8,14 @@ typedef unsigned int unint;
 static MultiBoot_T globalMultiBoot;
 MultiBoot_T *privMultiBoot = &globalMultiBoot;
 
+typedef enum{
+    MSGSND_SUCC = 0,
+    MSGSND_FAIL,
+};
+
+
+static int erase_special_symbols(const char *src, char *dst, int dst_len);
+
 int setPacket(int num, volatile unsigned char *addr);
 
 
@@ -100,6 +108,13 @@ int main (int argc, char **argv){
     val = p;
 
 #endif
+
+    
+    char temp[20] = {"chear_pc_1"};
+    char dst[20] = {0};
+    printf("chear_debug: symbols start \n");
+    erase_special_symbols(temp, dst, 20);
+    printf("chear_debug: symbols end \n");
     return 0 ;
 }
 
@@ -108,4 +123,82 @@ int main (int argc, char **argv){
 int setPacket(int num, volatile unsigned char *addr){
     RxPacket[num] = addr;
     return 0;
+}
+
+
+
+/*
+ *  1) foo->bar is equivalent to (*foo).bar, i.e. it gets the member called bar from the struct that foo points to.
+ *
+ *  2) . is standard member access operator that has a higher precedence than * pointer operator. 
+ *  When you are trying to access a struct's internals and you wrote it as *foo.bar 
+ *  then the compiler would think to want a 'bar' element of 'foo' (which is an address in memory) 
+ *  and obviously that mere address does not have any members. 
+ *  Thus you need to ask the compiler to first dereference whith (*foo) and then access the member element: 
+ *  (*foo).bar, which is a bit clumsy to write so the good folks have come up with a shorthand version: foo->bar which is sort of member access by pointer operator.
+ *	
+ *  final foo->bar is only shorthand for (*foo).bar. That's all there is to it.
+ */
+struct foo
+{
+  int x;
+  float y;
+};
+
+void CallMember(void){
+	struct foo var;
+	struct foo* pvar;
+	pvar = malloc(sizeof(pvar));
+
+	var.x = 5;
+	(&var)->y = 14.3;
+	pvar->y = 22.4;
+	(*pvar).x = 6;
+	printf("var [%d,%d] , pvar [%d, %d] \r\n",var.x ,var.y, pvar->x,pvar->y);
+}
+
+
+
+static int erase_special_symbols(const char *src, char *dst, int dst_len)
+{
+    char *curPos = src;
+    int src_len;
+    unsigned char ch;
+    unsigned int i =0;
+    char *sub;
+    if(curPos == NULL){
+        return MSGSND_FAIL;
+
+    }
+    src_len = strlen(src);
+    if(src_len > (dst_len-1))
+    {
+        src_len = dst_len-1;
+    }
+    printf("chear_debug: src = %s \n", curPos);
+    while((*curPos != NULL) && (curPos - src) < src_len){
+        sub = &(*curPos) ;
+        printf("chear_debug:dnsmasq -- %d ,%d \n" ,(unsigned int) &curPos,(unsigned int) &(*curPos));
+        printf("chear_debug:dnsmasq -- [%c], sub = %s \n", (unsigned char)(*curPos), sub);
+
+#if 1
+        *dst = *curPos;
+        curPos++;
+        dst++;
+       
+#else
+        if((isalnum(*curPos) || (is_whitelist_symbol(*curPos) == MSGSND_SUCC)) || (char)(*curPos ) > 127 ){
+            *dst = *curPos;
+            curPos++;
+            dst++;
+
+        } else {
+            curPos++;
+
+        }
+#endif
+    }
+    *dst = '\0';
+    return MSGSND_SUCC;
+
 }
