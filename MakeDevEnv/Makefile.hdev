@@ -55,6 +55,11 @@ BUSYBOX_PATH=$(OPENWRT_PATH)/build_dir/target-arm-openwrt-linux-uclibcgnueabi/bu
 ifeq ($(strip $(chip)),sd5116)
 GATEWAY_LINUX_PATH=$(CURRENT_DIR)/solution/patch/openwrt/target/linux/$(chip)/files
 LINUX_HI_BOOT_PATH=$(CURRENT_DIR)/openwrt/build_dir/target-arm-openwrt-linux-uclibcgnueabi/hi_boot/hiboot/hi-boot-ram/hi-boot-ram-1.0.0
+else ifeq ($(strip $(chip)),5682t)
+GATEWAY_LINUX_PATH=$(CURRENT_DIR)/opensrc/kernel/linux-4.4.51
+LINUX_HI_BOOT_PATH=$(CURRENT_DIR)/hisilicon/boot
+LINUX_PATH=$(GATEWAY_LINUX_PATH)
+oBUSYBOX_PATH=$(OPENWRT_PATH)/opensrc/busybox/busybox-1.22.1
 endif
 
 #######################   function define begin  ######################
