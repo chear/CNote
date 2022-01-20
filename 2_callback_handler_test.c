@@ -39,11 +39,10 @@ extern SetCallBackFun(int a, DoHandler callback)
     p->callback = callback;
 
     //创建线程
-    /*
     pthread_t thing1;
     pthread_create(&thing1,NULL,callback_thread,(void *) p);
     pthread_join(thing1,NULL);
-    */
+    
 }
 
 

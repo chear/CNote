@@ -152,25 +152,25 @@ bsp_clean:
 app_zyclip_env:app_zyclip_clean
 	@if [ ! -e $(MITRASTAR_APP_PATH)/.ctagsignore  ];then \
  		echo $(MITRASTAR_APP_PATH)"/libCmd/BROADCOM/* "  > $(MITRASTAR_APP_PATH)/.ctagsignore; \
-		echo $(MITRASTAR_APP_PATH)"/libcmd/CORTINA/* "  >> $(mitrastar_app_path)/.ctagsignore; \
+		echo $(MITRASTAR_APP_PATH)"/libcmd/CORTINA/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
 		echo $(MITRASTAR_APP_PATH)"/libCmd/REALTEK/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
 		echo $(MITRASTAR_APP_PATH)"/libCmd/BROADCOM/* "  > $(MITRASTAR_APP_PATH)/.ctagsignore; \
-		echo $(MITRASTAR_APP_PATH)"/libcmd/CORTINA/* "  >> $(mitrastar_app_path)/.ctagsignore; \
+		echo $(MITRASTAR_APP_PATH)"/libcmd/CORTINA/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
 		echo $(MITRASTAR_APP_PATH)"/libCmd/REALTEK/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
 		echo $(MITRASTAR_APP_PATH)"/libwrappercommon/BROADCOM/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
-		echo $(MITRASTAR_APP_PATH)"/libwrappercommon/CORTINA/* "  >> $(mitrastar_app_path)/.ctagsignore; \
+		echo $(MITRASTAR_APP_PATH)"/libwrappercommon/CORTINA/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
 		echo $(MITRASTAR_APP_PATH)"/libwrappercommon/REALTEK/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
 		echo $(MITRASTAR_APP_PATH)"/libledctl/BROADCOM/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
-		echo $(MITRASTAR_APP_PATH)"/libledctl/CORTINA/* "  >> $(mitrastar_app_path)/.ctagsignore; \
+		echo $(MITRASTAR_APP_PATH)"/libledctl/CORTINA/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
 		echo $(MITRASTAR_APP_PATH)"/libledctl/REALTEK/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
 		echo $(MITRASTAR_APP_PATH)"/libboardaccess/BROADCOM/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
-		echo $(MITRASTAR_APP_PATH)"/libboardaccess/CORTINA/* "  >> $(mitrastar_app_path)/.ctagsignore; \
+		echo $(MITRASTAR_APP_PATH)"/libboardaccess/CORTINA/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
 		echo $(MITRASTAR_APP_PATH)"/libboardaccess/REALTEK/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
 		echo $(MITRASTAR_APP_PATH)"/librdmcommon/BROADCOM/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
-		echo $(MITRASTAR_APP_PATH)"/librdmcommon/CORTINA/* "  >> $(mitrastar_app_path)/.ctagsignore; \
+		echo $(MITRASTAR_APP_PATH)"/librdmcommon/CORTINA/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
 		echo $(MITRASTAR_APP_PATH)"/librdmcommon/REALTEK/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
 		echo $(MITRASTAR_APP_PATH)"/lnkdetection/BROADCOM/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
-		echo $(MITRASTAR_APP_PATH)"/lnkdetection/CORTINA/* "  >> $(mitrastar_app_path)/.ctagsignore; \
+		echo $(MITRASTAR_APP_PATH)"/lnkdetection/CORTINA/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
 		echo $(MITRASTAR_APP_PATH)"/lnkdetection/REALTEK/* "  >> $(MITRASTAR_APP_PATH)/.ctagsignore; \
 	fi;
 	$(call GenMLDCtags,$(MITRASTAR_APP_PATH))
